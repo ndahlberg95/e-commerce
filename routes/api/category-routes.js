@@ -36,7 +36,7 @@ router.post('/', (req, res) => {
     // expects {id: '1', category-name: 'Shoes'}
     Category.create({
         id: req.body.id,
-        category_id: req.body.category_name
+        category_name: req.body.category_name
     })
         .then(dbCategoryData => res.json(dbCategoryData))
         .catch(err => {
@@ -46,25 +46,17 @@ router.post('/', (req, res) => {
 });
 
 // PUT /api/categories/1
-router.put('/:id', (req, res) => {
-    // expects {id: '1', category-name: 'Shoes'}
+router.put('/:id', async (req, res) => {
+    // expects {id: 1, category-name: 'Shoes'}
     // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
-    Category.update(req.body, {
+    let cat = await Category.findOne({
         where: {
             id: req.params.id
         }
     })
-        .then(dbCategoryData => {
-            if (!dbCategoryData[0]) {
-                res.status(404).json({ message: 'No category found with this id' });
-                return;
-            }
-            res.json(dbCategoryData);
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+    cat.category_name = req.body.category_name ? req.body.category_name : cat.category_name
+    await cat.save();
+    res.json(cat);
 });
 
 // DELETE /api/categories/1
