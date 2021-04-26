@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { ProductTag } = require('../../models');
+const { Product } = require('../../models');
 
 // GET /api/products
 router.get('/', (req, res) => {
